@@ -12,6 +12,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,6 +67,38 @@ void Dkc3TelemetryBye(Dkc3Telemetry *t, uint64_t frame);
  * unless DKCOUNTRY_TELEMETRY was set when the first frame ran. */
 void Dkc3TelemetryHostFrame(const uint8_t *wram, uint64_t frame);
 void Dkc3TelemetryHostStateLoaded(void);
+
+/* Boot sound capture for the DKCountry launcher. When DKCOUNTRY_BOOT_AUDIO
+ * names a file, the sound the host renders from power-on (logos, title
+ * screen) is written there as a 16-bit PCM WAV, without its leading
+ * silence, until gameplay starts or DKCOUNTRY_BOOT_AUDIO_SECONDS (default
+ * 70) have been written. The sizes in the header stay zero until the file
+ * is complete. Nothing from the ROM is written besides that sound, and the
+ * file stays on the player's machine. */
+typedef struct Dkc3BootAudio {
+  FILE *file;
+  uint32_t frames;      /* written so far */
+  uint32_t max_frames;
+  int channels, rate;
+  bool heard;           /* past the leading silence */
+  bool stop;            /* gameplay started */
+  bool done;
+} Dkc3BootAudio;
+
+bool Dkc3BootAudioOpen(Dkc3BootAudio *b, const char *path, int channels,
+                       int rate, double max_seconds);
+void Dkc3BootAudioWrite(Dkc3BootAudio *b, const int16_t *samples, int frames);
+/* Gameplay started: the capture ends, unless it has barely begun. */
+void Dkc3BootAudioGameplay(Dkc3BootAudio *b);
+bool Dkc3BootAudioDone(const Dkc3BootAudio *b);
+
+/* Host hook: call with each block of game audio, before any music pack is
+ * mixed in. Inert unless the launcher asked for a capture; during a capture
+ * run the block is silenced after it is recorded, because that run is
+ * hidden. */
+void Dkc3TelemetryHostAudio(int16_t *samples, int frames, int channels,
+                            int rate);
+
 
 #ifdef __cplusplus
 }

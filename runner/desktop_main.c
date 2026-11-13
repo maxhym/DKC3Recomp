@@ -8,6 +8,7 @@
 #include <SDL.h>
 
 #include "dkc3_game.h"
+#include "dkc3_telemetry.h"
 #include "dkc3_video.h"
 #include "diagnostics.h"
 #include "desktop_filter.h"
@@ -1169,6 +1170,8 @@ static int RunDesktop(const char *rom_path,
         int audio_frames = (int)audio_fraction;
         audio_fraction -= audio_frames;
         RtlRenderAudio(frame_audio, audio_frames, kAudioChannels);
+        Dkc3TelemetryHostAudio(frame_audio, audio_frames, kAudioChannels,
+                               kAudioRate);
         if (mode == kDesktopSpeedNormal && s_audio.available &&
             !AppendAudio(frame_audio, (size_t)audio_frames)) {
           fprintf(stderr,

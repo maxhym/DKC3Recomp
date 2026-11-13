@@ -228,6 +228,12 @@ frame and never changes the game. Without the variable it does nothing. The
 event logic is covered by `tests/test_dkc3_telemetry.c` on synthetic memory;
 it has not yet been validated against a real play session.
 
+The same bridge can record the game's boot sound for the launcher: when
+`DKCOUNTRY_BOOT_AUDIO` names a file, the sound rendered from power-on (logos,
+title screen) is written there as a WAV until the first demo level or a time
+limit. The launcher runs this once, hidden, on the player's own PC; the file
+is never part of this repository. Not yet tried against a real ROM.
+
 ## Headless validation
 
 ```bash
