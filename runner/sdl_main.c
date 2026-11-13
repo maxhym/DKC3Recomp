@@ -5,6 +5,7 @@
 
 #include "dkc3_game.h"
 #include "dkc3_haptics.h"
+#include "dkc3_telemetry.h"
 #include "dkc3_video.h"
 #include "diagnostics.h"
 #include "desktop_filter.h"
@@ -1579,6 +1580,8 @@ static int RunGame(const char *rom_path,
         int audio_frames = (int)audio_fraction;
         audio_fraction -= audio_frames;
         RtlRenderAudio(frame_audio, audio_frames, kAudioChannels);
+        Dkc3TelemetryHostAudio(frame_audio, audio_frames, kAudioChannels,
+                               kAudioRate);
 #ifdef __APPLE__
         Dkc3Msu1Mix(host.msu1, frame_audio, audio_frames, kAudioChannels,
                     kAudioRate);
