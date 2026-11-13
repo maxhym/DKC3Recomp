@@ -3,6 +3,7 @@
 #include "dkc3_video.h"
 #include "dkc3_facts.h"
 #include "dkc3_spc_music.h"
+#include "dkc3_telemetry.h"
 
 #include "common_cpu_infra.h"
 #include "common_rtl.h"
@@ -639,6 +640,8 @@ static void Dkc3RunOneFrame(void) {
     snes_sync_master_clock(g_snes, g_cpu.master_cycles);
   }
   s_next_frame_master += kDkc3NtscFrameMasterClocks;
+  /* Read-only; inert unless the DKCountry launcher requested telemetry. */
+  Dkc3TelemetryHostFrame(g_ram, (uint64_t)snes_frame_counter);
 }
 
 static void Dkc3SaveExtra(SaveLoadInfo *sli) {
@@ -700,6 +703,7 @@ static void Dkc3OnStateLoaded(uint32_t version) {
   s_bias_valid = false;
   s_state_loaded_recently = !getenv("DKC3_LOAD_AS_LEVEL_START");
   Dkc3VideoSetTerrainReady(false);
+  Dkc3TelemetryHostStateLoaded();
 }
 
 static const RtlGameInfo kDkc3GameInfo = {

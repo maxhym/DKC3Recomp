@@ -5,6 +5,9 @@ project(dkc3_port
     DESCRIPTION "Native PC recompilation of Donkey Kong Country 3"
     LANGUAGES C)
 
+set_source_files_properties(runner/dkc3_telemetry.c PROPERTIES
+    COMPILE_DEFINITIONS DKC3_TELEMETRY_BUILD="${PROJECT_VERSION}")
+
 include(CTest)
 
 set(CMAKE_C_STANDARD 11)
@@ -116,6 +119,7 @@ if(DKC3_BUILD_SNESRECOMP)
         ${SNESRECOMP_RUNNER_SOURCES}
         ${DKC3_SNESRECOMP_GEN_SOURCES}
         runner/dkc3_game.c
+        runner/dkc3_telemetry.c
         runner/dkc3_video.c
         runner/dkc3_hdma.c
         runner/headless_host.c
@@ -168,6 +172,7 @@ if(DKC3_BUILD_SNESRECOMP)
             ${SNESRECOMP_RUNNER_SOURCES}
             ${DKC3_SNESRECOMP_GEN_SOURCES}
             runner/dkc3_game.c
+            runner/dkc3_telemetry.c
             runner/dkc3_video.c
             runner/dkc3_hdma.c
             runner/diagnostics.c
@@ -225,6 +230,7 @@ if(DKC3_BUILD_SNESRECOMP)
         ${SNESRECOMP_RUNNER_SOURCES}
         ${DKC3_SNESRECOMP_GEN_SOURCES}
         runner/dkc3_game.c
+        runner/dkc3_telemetry.c
         runner/dkc3_haptics.c
         runner/dkc3_video.c
         runner/dkc3_hdma.c
@@ -543,6 +549,16 @@ if(BUILD_TESTING)
     add_test(NAME dkc3_video COMMAND test_dkc3_video)
     set_tests_properties(dkc3_video PROPERTIES
         LABELS "unit;desktop;video;widescreen")
+
+    add_executable(test_dkc3_telemetry
+        tests/test_dkc3_telemetry.c
+        runner/dkc3_telemetry.c)
+    target_include_directories(test_dkc3_telemetry PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/runner)
+    dkc3_enable_project_warnings(test_dkc3_telemetry)
+    add_test(NAME dkc3_telemetry COMMAND test_dkc3_telemetry)
+    set_tests_properties(dkc3_telemetry PROPERTIES
+        LABELS "unit;telemetry")
 
     add_executable(test_dkc3_haptics
         tests/test_dkc3_haptics.c

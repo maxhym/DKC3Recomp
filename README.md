@@ -217,6 +217,17 @@ it with `DKC3_MSU1_GAIN=0`, `DKC3_SAVESTATE_INPUT`, and `DKC3_AUDIO_PCM` to
 capture only the remaining stock sound effects; omit the gain override to
 capture the full replacement mix.
 
+## DKCountry launcher telemetry
+
+The hosts can feed statistics and achievements to the separate DKCountry
+launcher. When the launcher starts the game it sets `DKCOUNTRY_TELEMETRY` to a
+file path; the game then appends one JSON line per event (levels, bananas,
+bear coins, bonus coins, DK coins, banana birds, KONG letters, animal buddies,
+lives lost, distance, state loads). The bridge only reads memory after each
+frame and never changes the game. Without the variable it does nothing. The
+event logic is covered by `tests/test_dkc3_telemetry.c` on synthetic memory;
+it has not yet been validated against a real play session.
+
 ## Headless validation
 
 ```bash
